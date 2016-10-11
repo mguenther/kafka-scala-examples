@@ -1,0 +1,24 @@
+version: '2'
+services:
+  zookeeper:
+    image: mgu/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: mgu/kafka
+    ports:
+      - "9092"
+      - "10101"
+      - "10102"
+    environment:
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_CREATE_TOPICS: "test:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  kafka-manager:
+    image: mgu/kafka-manager
+    ports:
+      - "9000:9000"
+    environment:
+      ZK_HOSTS: zookeeper:2181

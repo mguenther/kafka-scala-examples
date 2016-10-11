@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker build -t mgu/zookeeper zookeeper/
+docker build -t mgu/kafka kafka/
+docker build -t mgu/kafka-manager kafka-manager/
