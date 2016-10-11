@@ -39,10 +39,20 @@ In the default configuration a single Kafka broker instance is started in a sepa
 
 ```bash
 $ docker-compose scale=kafka 3   # upscales to 3 Kafka brokers
-$ docker-compose scale=kafka 1   # downsclaes to 1 Kafka broker after the previous upscale
+$ docker-compose scale=kafka 1   # downscales to 1 Kafka broker after the previous upscale
 ```
 
-The Yahoo Kafka Manager needs to be configured for the local cluster before you are able to view the statistics of the cluster.
+The Yahoo Kafka Manager needs to be configured for the local cluster before you are able to view the statistics of the cluster. Open up your browser and go to the URL ```localhost:9000``` to open up Kafka Manager. You will notice that there is no cluster configuration ready.
+
+![Kafka-Manager-No-Cluster-Configured](./README-kafka-manager-01.jpg)
+
+Click on the menu ```Cluster``` and choose ```Add cluster``` from the dropdown. Fill out the form on the next screen as the screenshot below suggests.
+
+![Kafka-Manager-Cluster-Configuration](./README-kafka-manager-02.jpg)
+
+Click on ```Save``` at the bottom of the form and you will be redirected to the cluster overview page. All is well if the cluster overview looks like the following screenshot.
+
+![Kafka-Manager-Cluster-Overview](./README-kafka-manager-03.jpg)
 
 ## License
 

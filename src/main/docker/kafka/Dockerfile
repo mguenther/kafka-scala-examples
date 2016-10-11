@@ -14,10 +14,9 @@ RUN \
   add-apt-repository -y ppa:webupd8team/java && \
   apt-get update && \
   apt-get install -y oracle-java8-installer && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk8-installer && \
   apt-get install -y wget supervisor dnsutils curl jq coreutils docker net-tools && \
   rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk8-installer && \
   apt-get clean && \
   wget -q http://apache.mirrors.spacedump.net/kafka/"$KAFKA_VERSION"/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION".tgz -O /tmp/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION".tgz && \
   tar xfz /tmp/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION".tgz -C /opt && \
@@ -26,7 +25,7 @@ RUN \
 VOLUME ["/kafka"]
 
 ADD kafka-start /usr/bin/kafka-start
-ADD create-topics.sh /usr/bin/create-topics.sh
+ADD kafka-create-topics /usr/bin/kafka-create-topics
 ADD supervisord.conf /etc/supervisor/conf.d/
 
 EXPOSE 9092
