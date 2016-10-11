@@ -3,6 +3,7 @@ package com.mgu.kafkaexamples
 import java.util.{Properties, UUID}
 
 import com.mgu.kafkaexamples.ProducerWorker._
+import com.mgu.kafkaexamples.util.{ContainerUtil, JsonUtil}
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -70,9 +71,11 @@ object ProducerWorker {
 
   protected val logger: Logger = LoggerFactory getLogger getClass
 
+  private val kafkaHost: String = ContainerUtil.getHostIp("docker_kafka_1").concat(":").concat(9092.toString)
+
   case class UnitOfWork(topic: String, message: Message)
 
-  case class ProducerSettings(bootstrapServers: List[String] = List("localhost:9092"),
+  case class ProducerSettings(bootstrapServers: List[String] = List(kafkaHost),
                               keySerializer: String = "org.apache.kafka.common.serialization.StringSerializer",
                               valueSerializer: String = "org.apache.kafka.common.serialization.StringSerializer") {
 

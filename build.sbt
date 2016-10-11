@@ -14,5 +14,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json" % "2.3.4",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.3",
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.3",
+  "org.apache.commons" % "commons-exec" % "1.3",
+  "com.google.guava" % "guava" % "19.0",
   "org.scalatest" %% "scalatest" % "2.2.6" % Test)
-

@@ -1,6 +1,6 @@
-package com.mgu.kafkaexamples
+package com.mgu.kafkaexamples.util
 
-import com.fasterxml.jackson.databind.{ObjectMapper, DeserializationFeature}
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 

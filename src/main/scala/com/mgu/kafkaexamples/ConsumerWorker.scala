@@ -1,9 +1,9 @@
 package com.mgu.kafkaexamples
 
-import java.util
 import java.util.{Arrays, Properties, UUID}
 
 import com.mgu.kafkaexamples.ConsumerWorker._
+import com.mgu.kafkaexamples.util.{ContainerUtil, JsonUtil}
 import org.apache.kafka.clients.consumer.{ConsumerRecord, KafkaConsumer}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -37,7 +37,7 @@ class ConsumerWorker(val workerId: String = UUID.randomUUID.toString.substring(0
     }
   }
 
-  private def toSeq(recordsIter: util.Iterator[ConsumerRecord[String, String]]): Seq[ConsumerRecord[String, String]] =
+  private def toSeq(recordsIter: java.util.Iterator[ConsumerRecord[String, String]]): Seq[ConsumerRecord[String, String]] =
     JavaConverters.asScalaIteratorConverter(recordsIter).asScala.toSeq
 
   private def deserialize(payload: String): Option[Message] = {
@@ -61,7 +61,9 @@ object ConsumerWorker {
 
   protected val logger: Logger = LoggerFactory getLogger getClass
 
-  case class ConsumerSettings(bootstrapServers: List[String] = List("localhost:9092"),
+  private val kafkaHost: String = ContainerUtil.getHostIp("docker_kafka_1").concat(":").concat(9092.toString)
+
+  case class ConsumerSettings(bootstrapServers: List[String] = List(kafkaHost),
                               topics: List[String] = List("test"),
                               groupId: String = "kafka-scala-group-1",
                               keyDeserializer: String = "org.apache.kafka.common.serialization.StringDeserializer",

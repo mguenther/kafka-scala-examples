@@ -1,5 +1,7 @@
 package com.mgu.kafkaexamples
 
+import com.mgu.kafkaexamples.util.JsonUtil
+
 object MarshallableImplicits {
 
   implicit class Unmarshallable(unMarshallMe: String) {

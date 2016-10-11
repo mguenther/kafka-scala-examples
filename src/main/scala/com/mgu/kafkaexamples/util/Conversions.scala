@@ -1,6 +1,6 @@
-package com.mgu.kafkaexamples
+package com.mgu.kafkaexamples.util
 
-import java.util.function.{ Consumer => JConsumer, BiConsumer => JBiConsumer }
+import java.util.function.{BiConsumer => JBiConsumer, Consumer => JConsumer}
 
 object Conversions {
 
