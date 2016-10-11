@@ -16,7 +16,7 @@ The Dockerfiles are heavily inspired by the excellent Dockerfiles provided by Gi
 | Apache Zookeeper    | 3.4.5   | mgu/zookeeper     |
 | Yahoo Kafka Manager | 1.3.1.8 | mgu/kafka-manager |
 
-### Building and Running the Containers
+## Building and Running the Containers
 
 Before you execute the code samples, make sure that you have a working environment running. If you have not done it already, use the script ```build-images``` to create Docker images for all required applications. Since Yahoo Kafka Manager is compiled from source, this will take a couple of minutes.
 
@@ -42,6 +42,10 @@ $ docker-compose scale=kafka 3   # upscales to 3 Kafka brokers
 $ docker-compose scale=kafka 1   # downscales to 1 Kafka broker after the previous upscale
 ```
 
+After changing the number of Kafka brokers, give the cluster some time so that all brokers can finish their cluster-join procedure. This should complete in a couple of seconds and you can inspect the output of the resp. Docker containers just to be sure that everything is fine. Kafka Manager should also reflect the change in the number of Kafka brokers after they successfully joined the cluster.
+
+## Setting up Yahoo Kafka Manager
+
 The Yahoo Kafka Manager needs to be configured for the local cluster before you are able to view the statistics of the cluster. Open up your browser and go to the URL ```localhost:9000``` to open up Kafka Manager. You will notice that there is no cluster configuration ready.
 
 ![Kafka-Manager-No-Cluster-Configured](./README-kafka-manager-01.jpg)
@@ -53,6 +57,30 @@ Click on the menu ```Cluster``` and choose ```Add cluster``` from the dropdown. 
 Click on ```Save``` at the bottom of the form and you will be redirected to the cluster overview page. All is well if the cluster overview looks like the following screenshot.
 
 ![Kafka-Manager-Cluster-Overview](./README-kafka-manager-03.jpg)
+
+## Running the Scala-based Kafka CLI
+
+Go to the repository root and issue
+
+```bash
+$ sbt run
+```
+
+This will start ```KafkaExampleCli``` which instantiates a single producer (cf. class ```ProducerWorker```) and a single consumer (cf. class ```ConsumerWorker```) and gives you a simplistic shell-like environment to dispatch messages. Type in
+
+```
+send test This is a test message.
+```
+
+to send a message to topic ```test```. You should see something along the lines of the following output:
+
+```
+19:59:51.513 ProducerWorker$: [ba6a6d0] Accepted message Message(b8779f2,This is test message.) for dispatch to topic test.
+19:59:51.667 ProducerWorker$: [ba6a6d0] Send message 'Message(b8779f2,This is test message.)' to topic test.
+19:59:51.706 ConsumerWorker$: [a19be40] Received payload: Message(b8779f2,This is test message.)
+```
+
+This output tells you that the producer with ID ```ba6a6d0``` has accepted and sent the message to topic ```test``` and that sometime after the consumer with ID ```a19be40``` has read that same message from topic ```test```, to which it is subscribed to.
 
 ## License
 
