@@ -43,10 +43,10 @@ class ProducerWorker(val workerId: String = UUID.randomUUID.toString.substring(0
       case Some(jsonString) => {
         val record = new ProducerRecord[String, String](unitOfWork.topic, jsonString)
         underlyingProducer.send(record)
-        logger.info(s"Send message '${unitOfWork.message}' to topic ${unitOfWork.topic}.")
+        logger.info(s"[${workerId}] Send message '${unitOfWork.message}' to topic ${unitOfWork.topic}.")
       }
       case None =>
-        logger.warn(s"Unable to send message ${unitOfWork.message} to topic ${unitOfWork.topic} due to serialization errors.")
+        logger.warn(s"[${workerId}] Unable to send message ${unitOfWork.message} to topic ${unitOfWork.topic} due to serialization errors.")
     }
   }
 
@@ -63,7 +63,7 @@ class ProducerWorker(val workerId: String = UUID.randomUUID.toString.substring(0
 
   def submit(topic: String, message: Message) = {
     workQueue.enqueue(UnitOfWork(topic, message))
-    logger.info(s"Accepted message ${message} for dispatch to topic ${topic}.")
+    logger.info(s"[${workerId}] Accepted message ${message} for dispatch to topic ${topic}.")
   }
 }
 
