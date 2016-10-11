@@ -16,7 +16,8 @@ RUN \
   apt-get update && \
   apt-get install -y oracle-java8-installer git unzip && \
   rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk8-installer && \ mkdir -p /tmp && \
+  rm -rf /var/cache/oracle-jdk8-installer && \
+  mkdir -p /tmp && \
   cd /tmp && \
   git clone https://github.com/yahoo/kafka-manager && \
   cd /tmp/kafka-manager && \
