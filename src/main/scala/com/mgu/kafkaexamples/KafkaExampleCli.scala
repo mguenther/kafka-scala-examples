@@ -7,7 +7,7 @@ import com.mgu.kafkaexamples.avro.Message
 
 import scala.io.Source
 
-class KafkaExampleCli(val producer: AvroProducerWorker, val consumer: AvroConsumerWorker) extends Actor {
+class KafkaExampleCli(val producer: AvroProducerWorker[Message], val consumer: AvroConsumerWorker[Message]) extends Actor {
 
   val lines = Source.stdin.getLines
 
@@ -63,9 +63,9 @@ class KafkaExampleCli(val producer: AvroProducerWorker, val consumer: AvroConsum
 object KafkaExampleCli extends App {
 
   val system = ActorSystem.create("kafka-example-cli")
-  val producer = new AvroProducerWorker
+  val producer = new AvroProducerWorker[Message]
   val producerThread = new Thread(producer)
-  val consumer = new AvroConsumerWorker
+  val consumer = new AvroConsumerWorker[Message]
   val consumerThread = new Thread(consumer)
 
   producerThread.start()

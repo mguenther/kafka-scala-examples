@@ -6,13 +6,16 @@ import com.mgu.kafkaexamples.AvroConsumerWorker._
 import com.mgu.kafkaexamples.Settings.ConsumerSettings
 import com.mgu.kafkaexamples.avro.Message
 import com.twitter.bijection.avro.SpecificAvroCodecs
+import org.apache.avro.specific.SpecificRecordBase
 import org.apache.kafka.clients.consumer.{ConsumerRecord, KafkaConsumer}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters
+import scala.reflect.ClassTag
 
-class AvroConsumerWorker(val workerId: String = UUID.randomUUID.toString.substring(0, 7),
-                         val settings: ConsumerSettings = ConsumerSettings().copy(valueDeserializer = "org.apache.kafka.common.serialization.ByteArrayDeserializer")) extends Runnable {
+class AvroConsumerWorker[T <: SpecificRecordBase : ClassTag](val workerId: String = randomConsumerId(),
+                                                             val settings: ConsumerSettings = ConsumerSettings()
+                                                               .copy(valueDeserializer = "org.apache.kafka.common.serialization.ByteArrayDeserializer")) extends Runnable {
 
   @volatile
   private var running = true
@@ -39,15 +42,15 @@ class AvroConsumerWorker(val workerId: String = UUID.randomUUID.toString.substri
   private def toSeq(recordsIter: java.util.Iterator[ConsumerRecord[String, Array[Byte]]]): Seq[ConsumerRecord[String, Array[Byte]]] =
     JavaConverters.asScalaIteratorConverter(recordsIter).asScala.toSeq
 
-  private def deserialize(payload: Array[Byte]): Option[Message] = {
+  private def deserialize(payload: Array[Byte]): Option[T] = {
     try {
-      SpecificAvroCodecs.toBinary[Message].invert(payload).toOption
+      SpecificAvroCodecs.toBinary[T].invert(payload).toOption
     } catch {
       case ex: Exception => None
     }
   }
 
-  private def onMessage(payload: Option[Message]) = payload match {
+  private def onMessage(payload: Option[T]) = payload match {
     case Some(message) => logger.info(s"[${workerId}] Received payload: ${message}")
     case None => logger.info(s"[${workerId}] Received an empty payload. Probably unable to deserialize it properly.")
   }
@@ -58,4 +61,6 @@ class AvroConsumerWorker(val workerId: String = UUID.randomUUID.toString.substri
 object AvroConsumerWorker {
 
   protected val logger: Logger = LoggerFactory getLogger getClass
+
+  def randomConsumerId(): String = UUID.randomUUID.toString.substring(0, 7)
 }
