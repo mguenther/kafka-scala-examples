@@ -4,7 +4,6 @@ import java.util.{Arrays, UUID}
 
 import com.mgu.kafkaexamples.AvroConsumerWorker._
 import com.mgu.kafkaexamples.Settings.ConsumerSettings
-import com.mgu.kafkaexamples.avro.Message
 import com.twitter.bijection.avro.SpecificAvroCodecs
 import org.apache.avro.specific.SpecificRecordBase
 import org.apache.kafka.clients.consumer.{ConsumerRecord, KafkaConsumer}
@@ -27,7 +26,8 @@ class AvroConsumerWorker[T <: SpecificRecordBase : ClassTag](val workerId: Strin
     logger.info(s"[${workerId}] Attempting to subscribe to topics.")
     subscribeTo()
     while (running) {
-      val records = toSeq(underlyingConsumer.poll(100).iterator())
+      val records = toSeq(underlyingConsumer.poll(1000).iterator())
+      if (records.size > 0) logger.info(s"[${workerId}] Found ${records.size} messages. Trying to deserialize them.")
       records.map(_.value()).map(deserialize).foreach(onMessage)
     }
   }
@@ -44,9 +44,11 @@ class AvroConsumerWorker[T <: SpecificRecordBase : ClassTag](val workerId: Strin
 
   private def deserialize(payload: Array[Byte]): Option[T] = {
     try {
-      SpecificAvroCodecs.toBinary[T].invert(payload).toOption
+      Some(SpecificAvroCodecs.toBinary[T].invert(payload).get)
     } catch {
-      case ex: Exception => None
+      case ex: Exception =>
+        logger.info(s"[${workerId}] Caught exception with message '${ex.getMessage}' while trying to deserialize.")
+        None
     }
   }
 

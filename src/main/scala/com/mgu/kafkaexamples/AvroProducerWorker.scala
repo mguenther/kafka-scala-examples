@@ -24,7 +24,7 @@ class AvroProducerWorker[T <: SpecificRecordBase : ClassTag](val workerId: Strin
   private lazy val underlyingProducer = new KafkaProducer[String, Array[Byte]](settings.toProperties)
 
   override def run() = {
-    logger.info(s"${workerId}] Initialized underlying Kafka producer.")
+    logger.info(s"[${workerId}] Initialized underlying Kafka producer.")
     while (running) {
       nextUnitOfWork() match {
         case Some(unitOfWork) => sendImmediately(unitOfWork)
