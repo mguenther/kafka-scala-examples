@@ -2,3 +2,4 @@
 .git
 project/target
 target
+src/main/generated

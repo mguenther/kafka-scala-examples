@@ -1,0 +1,9 @@
+{
+    "namespace": "com.mgu.kafkaexamples.avro",
+    "type": "record",
+    "name": "Message",
+    "fields": [
+        {"name": "messageId", "type": "string"},
+        {"name": "text", "type": "string"}
+    ]
+}

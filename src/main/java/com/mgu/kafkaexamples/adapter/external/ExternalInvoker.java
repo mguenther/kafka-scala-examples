@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ExternalInvoker {
-
     public static class ExternalInvokerBuilder {
 
         private final String externalProgram;

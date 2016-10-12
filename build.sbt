@@ -16,4 +16,13 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.3",
   "org.apache.commons" % "commons-exec" % "1.3",
   "com.google.guava" % "guava" % "19.0",
+  "org.apache.avro" % "avro" % "1.6.3",
+  "com.twitter" %% "bijection-avro" % "0.9.2",
   "org.scalatest" %% "scalatest" % "2.2.6" % Test)
+
+Seq( sbtavro.SbtAvro.avroSettings : _*)
+
+//E.g. put the source where IntelliJ can see it 'src/main/java' instead of 'targe/scr_managed'.
+javaSource in sbtavro.SbtAvro.avroConfig <<= (sourceDirectory in Compile)(_ / "generated")
+
+(stringType in avroConfig) := "String"

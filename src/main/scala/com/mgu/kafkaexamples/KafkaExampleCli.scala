@@ -1,18 +1,25 @@
 package com.mgu.kafkaexamples
 
-import java.util.{Properties, UUID}
+import java.util.UUID
 
 import akka.actor.{Actor, ActorSystem, Props}
+import com.mgu.kafkaexamples.avro.Message
 
 import scala.io.Source
 
-class KafkaExampleCli(val producer: ProducerWorker, val consumer: ConsumerWorker) extends Actor {
+class KafkaExampleCli(val producer: AvroProducerWorker, val consumer: AvroConsumerWorker) extends Actor {
 
   val lines = Source.stdin.getLines
 
   override def receive: Receive = {
     case line: String => line.split(' ') toList match {
-      case "send" :: topic :: xs => producer.submit(topic, Message(text = xs mkString " ")); prompt()
+      case "send" :: topic :: xs =>
+        val message = Message.newBuilder
+          .setMessageId(UUID.randomUUID.toString.substring(0, 7))
+          .setText(xs mkString " ")
+          .build
+        producer.submit(topic, message)
+        prompt()
       case "help" :: Nil         => help(); prompt()
       case Nil                   => prompt()
       case "" :: Nil             => prompt()
@@ -56,9 +63,9 @@ class KafkaExampleCli(val producer: ProducerWorker, val consumer: ConsumerWorker
 object KafkaExampleCli extends App {
 
   val system = ActorSystem.create("kafka-example-cli")
-  val producer = new ProducerWorker
+  val producer = new AvroProducerWorker
   val producerThread = new Thread(producer)
-  val consumer = new ConsumerWorker
+  val consumer = new AvroConsumerWorker
   val consumerThread = new Thread(consumer)
 
   producerThread.start()
