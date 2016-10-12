@@ -1,0 +1,36 @@
+{
+    "namespace": "com.mgu.kafkaexamples.avro",
+    "type": "record",
+    "name": "Event",
+    "fields": [
+        {"name": "eventId", "type": "string"},
+        {"name": "eventType", "type": "string"},
+        {"name": "timestamp", "type": "long"},
+        {"name": "record", "type": [
+            {
+                "name": "UserCreatedEvent",
+                "type": "record",
+                "fields": [
+                    {"name": "userId", "type": "string"},
+                    {"name": "name", "type": "string"}
+                ]
+            },
+            {
+                "name": "UserDeletedEvent",
+                "type": "record",
+                "fields": [
+                    {"name": "userId", "type": "string"}
+                ]
+            },
+            {
+                "name": "UserModifiedEvent",
+                "type": "record",
+                "fields": [
+                    {"name": "userId", "type": "string"},
+                    {"name": "name", "type": "string"}
+                ]
+            }
+        ]
+        }
+    ]
+}
