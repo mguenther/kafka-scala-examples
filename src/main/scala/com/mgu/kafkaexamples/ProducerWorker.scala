@@ -2,24 +2,25 @@ package com.mgu.kafkaexamples
 
 import java.util.UUID
 
-import com.mgu.kafkaexamples.Messages.Message
 import com.mgu.kafkaexamples.ProducerWorker._
 import com.mgu.kafkaexamples.Settings.ProducerSettings
-import com.mgu.kafkaexamples.util.JsonUtil
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.Queue
+import scala.reflect.ClassTag
 
-class ProducerWorker(val workerId: String = UUID.randomUUID.toString.substring(0, 7),
-                     val settings: ProducerSettings = ProducerSettings()) extends Runnable {
+class ProducerWorker[I : ClassTag, O : ClassTag](val workerId: String = UUID.randomUUID.toString.substring(0, 7),
+                                      val settings: ProducerSettings[I, O]) extends Runnable {
 
   @volatile
   private var running = true
 
-  private val workQueue = Queue[UnitOfWork]()
+  private val workQueue = Queue[UnitOfWork[I]]()
 
-  private lazy val underlyingProducer = new KafkaProducer[String, String](settings.toProperties)
+  private val encoder: Encoder[I, O] = settings.encoder
+
+  private lazy val underlyingProducer = new KafkaProducer[String, O](settings.toProperties)
 
   override def run() = {
     logger.info(s"[${workerId}] Initialized underlying Kafka producer.")
@@ -34,38 +35,38 @@ class ProducerWorker(val workerId: String = UUID.randomUUID.toString.substring(0
     logger.info(s"[${workerId}] Underlying Kafka producer has been closed.")
   }
 
-  private def nextUnitOfWork(): Option[UnitOfWork] = try {
+  private def nextUnitOfWork(): Option[UnitOfWork[I]] = try {
     Some(workQueue.dequeue())
   } catch {
     case ex: Exception => None
   }
 
-  private def sendImmediately(unitOfWork: UnitOfWork) = {
-    serialize(unitOfWork.message) match {
+  private def sendImmediately(unitOfWork: UnitOfWork[I]) = {
+    encoder.encode(unitOfWork.payload) match {
       case Some(jsonString) => {
-        val record = new ProducerRecord[String, String](unitOfWork.topic, jsonString)
+        val record = new ProducerRecord[String, O](unitOfWork.topic, jsonString)
         underlyingProducer.send(record)
-        logger.info(s"[${workerId}] Send message '${unitOfWork.message}' to topic ${unitOfWork.topic}.")
+        logger.info(s"[${workerId}] Send message '${unitOfWork.payload}' to topic ${unitOfWork.topic}.")
       }
       case None =>
-        logger.warn(s"[${workerId}] Unable to send message ${unitOfWork.message} to topic ${unitOfWork.topic} due to serialization errors.")
+        logger.warn(s"[${workerId}] Unable to send message ${unitOfWork.payload} to topic ${unitOfWork.topic} due to serialization errors.")
     }
   }
 
-  private def serialize(payload: Message): Option[String] = {
+  /*private def serialize(payload: Message): Option[String] = {
     try {
       Some(JsonUtil.toJson(payload))
     } catch {
       case ex: Exception =>
         None
     }
-  }
+  }*/
 
   def shutdown() = running = false
 
-  def submit(topic: String, message: Message) = {
-    workQueue.enqueue(UnitOfWork(topic, message))
-    logger.info(s"[${workerId}] Accepted message ${message} for dispatch to topic ${topic}.")
+  def submit(topic: String, payload: I) = {
+    workQueue.enqueue(UnitOfWork(topic, payload))
+    logger.info(s"[${workerId}] Accepted message ${payload} for dispatch to topic ${topic}.")
   }
 }
 
@@ -73,5 +74,5 @@ object ProducerWorker {
 
   protected val logger: Logger = LoggerFactory getLogger getClass
 
-  case class UnitOfWork(topic: String, message: Message)
+  case class UnitOfWork[I](topic: String, payload: I)
 }

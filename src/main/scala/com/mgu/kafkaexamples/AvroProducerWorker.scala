@@ -2,7 +2,7 @@ package com.mgu.kafkaexamples
 
 import java.util.UUID
 
-import com.mgu.kafkaexamples.AvroProducerWorker._
+//import com.mgu.kafkaexamples.AvroProducerWorker._
 import com.mgu.kafkaexamples.Settings.ProducerSettings
 import com.twitter.bijection.avro.SpecificAvroCodecs
 import org.apache.avro.specific.SpecificRecordBase
@@ -12,7 +12,7 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.mutable.Queue
 import scala.reflect.ClassTag
 
-class AvroProducerWorker[T <: SpecificRecordBase : ClassTag](val workerId: String = randomProducerId(),
+/*class AvroProducerWorker[T <: SpecificRecordBase : ClassTag](val workerId: String = randomProducerId(),
                                                              val settings: ProducerSettings = ProducerSettings()
                                                                .copy(valueSerializer = "org.apache.kafka.common.serialization.ByteArraySerializer")) extends Runnable {
 
@@ -48,6 +48,7 @@ class AvroProducerWorker[T <: SpecificRecordBase : ClassTag](val workerId: Strin
         val record = new ProducerRecord[String, Array[Byte]](unitOfWork.topic, encodedMessage.asInstanceOf[Array[Byte]])
         underlyingProducer.send(record)
         logger.info(s"[${workerId}] Send message '${unitOfWork.payload}' to topic ${unitOfWork.topic}.")
+        logger.info(s"[${workerId}] Binary message is '${encodedMessage}")
       }
       case None =>
         logger.warn(s"[${workerId}] Unable to send message ${unitOfWork.payload} to topic ${unitOfWork.topic} due to serialization errors.")
@@ -80,3 +81,4 @@ object AvroProducerWorker {
   def randomProducerId(): String = UUID.randomUUID.toString.substring(0, 7)
 
 }
+*/

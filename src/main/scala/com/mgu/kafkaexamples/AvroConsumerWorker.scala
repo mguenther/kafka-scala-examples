@@ -2,7 +2,7 @@ package com.mgu.kafkaexamples
 
 import java.util.{Arrays, UUID}
 
-import com.mgu.kafkaexamples.AvroConsumerWorker._
+//import com.mgu.kafkaexamples.AvroConsumerWorker._
 import com.mgu.kafkaexamples.Settings.ConsumerSettings
 import com.twitter.bijection.avro.SpecificAvroCodecs
 import org.apache.avro.specific.SpecificRecordBase
@@ -12,7 +12,7 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.JavaConverters
 import scala.reflect.ClassTag
 
-class AvroConsumerWorker[T <: SpecificRecordBase : ClassTag](val workerId: String = randomConsumerId(),
+/*class AvroConsumerWorker[T <: SpecificRecordBase : ClassTag](val workerId: String = randomConsumerId(),
                                                              val settings: ConsumerSettings = ConsumerSettings()
                                                                .copy(valueDeserializer = "org.apache.kafka.common.serialization.ByteArrayDeserializer")) extends Runnable {
 
@@ -42,7 +42,7 @@ class AvroConsumerWorker[T <: SpecificRecordBase : ClassTag](val workerId: Strin
   private def toSeq(recordsIter: java.util.Iterator[ConsumerRecord[String, Array[Byte]]]): Seq[ConsumerRecord[String, Array[Byte]]] =
     JavaConverters.asScalaIteratorConverter(recordsIter).asScala.toSeq
 
-  private def deserialize(payload: Array[Byte]): Option[T] = {
+  private def deserialize(payload: Array[Byte]): Option[T] =
     try {
       Some(SpecificAvroCodecs.toBinary[T].invert(payload).get)
     } catch {
@@ -50,7 +50,6 @@ class AvroConsumerWorker[T <: SpecificRecordBase : ClassTag](val workerId: Strin
         logger.info(s"[${workerId}] Caught exception with message '${ex.getMessage}' while trying to deserialize.")
         None
     }
-  }
 
   private def onMessage(payload: Option[T]) = payload match {
     case Some(message) => logger.info(s"[${workerId}] Received payload: ${message}")
@@ -66,3 +65,4 @@ object AvroConsumerWorker {
 
   def randomConsumerId(): String = UUID.randomUUID.toString.substring(0, 7)
 }
+*/
