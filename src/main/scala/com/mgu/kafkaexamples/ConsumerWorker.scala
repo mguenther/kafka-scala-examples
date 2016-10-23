@@ -10,8 +10,8 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.JavaConverters
 import scala.reflect.ClassTag
 
-class ConsumerWorker[I : ClassTag, O : ClassTag](val workerId: String = UUID.randomUUID.toString.substring(0, 7),
-                           val settings: ConsumerSettings[I, O]) extends Runnable {
+class ConsumerWorker[I: ClassTag, O: ClassTag](val workerId: String = UUID.randomUUID.toString.substring(0, 7),
+                                               val settings: ConsumerSettings[I, O]) extends Runnable {
 
   @volatile
   private var running = true
@@ -27,8 +27,6 @@ class ConsumerWorker[I : ClassTag, O : ClassTag](val workerId: String = UUID.ran
     while (running) {
       val records = toSeq(underlyingConsumer.poll(100).iterator())
       records.map(_.value()).map(decoder.decode(_)(decoder.manifest)).foreach(onMessage(_))
-
-      //records.map(_.value()).map(decoder.decode).foreach(onMessage)
     }
     logger.info(s"[${workerId}] Closing underlying Kafka consumer.")
     underlyingConsumer.close()
@@ -44,15 +42,6 @@ class ConsumerWorker[I : ClassTag, O : ClassTag](val workerId: String = UUID.ran
 
   private def toSeq(recordsIter: java.util.Iterator[ConsumerRecord[String, O]]): Seq[ConsumerRecord[String, O]] =
     JavaConverters.asScalaIteratorConverter(recordsIter).asScala.toSeq
-
-  /*private def deserialize(payload: String): Option[Message] = {
-    try {
-      Some(JsonUtil.fromJson[Message](payload))
-    } catch {
-      case ex: Exception =>
-        None
-    }
-  }*/
 
   private def onMessage(payload: Option[I]) = payload match {
     case Some(value) => logger.info(s"[${workerId}] Received payload: ${value}")

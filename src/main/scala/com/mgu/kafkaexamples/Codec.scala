@@ -2,8 +2,6 @@ package com.mgu.kafkaexamples
 
 import org.apache.kafka.common.serialization.{Deserializer, Serializer}
 
-import scala.reflect.runtime.universe._
-
 /**
   * An `Encoder` knows how to transform a given input of type `I` to an output
   * of type `O`. By providing an implementation for [[Encoder#compatibleKafkaSerializer]]

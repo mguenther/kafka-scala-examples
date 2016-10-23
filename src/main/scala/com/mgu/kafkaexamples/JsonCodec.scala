@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import org.apache.kafka.common.serialization.{Deserializer, Serializer, StringDeserializer, StringSerializer}
+import org.slf4j.{LoggerFactory, Logger}
 
 import scala.reflect.ClassTag
-//import scala.reflect.runtime.universe._
 
 class JsonCodec[T : ClassTag](override val manifest: Manifest[T]) extends Codec[T, String] {
+
+  import JsonCodec._
 
   val mapper = new ObjectMapper() with ScalaObjectMapper
   mapper.registerModule(DefaultScalaModule)
@@ -19,8 +21,7 @@ class JsonCodec[T : ClassTag](override val manifest: Manifest[T]) extends Codec[
       Some(mapper.writeValueAsString(input))
     } catch {
       case ex: Exception =>
-        println(ex.getMessage)
-        println(ex)
+        logger.warn(s"Unable to encode input ${input} to JSON-based String.")
         None
     }
 
@@ -32,6 +33,13 @@ class JsonCodec[T : ClassTag](override val manifest: Manifest[T]) extends Codec[
     try {
       Some(mapper.readValue[T](output))
     } catch {
-      case ex: Exception => None
+      case ex: Exception =>
+        logger.warn(s"Unable to decode JSON ${output} to instance of class ${manifest.getClass}.")
+        None
     }
+}
+
+object JsonCodec {
+
+  protected val logger: Logger = LoggerFactory getLogger getClass
 }

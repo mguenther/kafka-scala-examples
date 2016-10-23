@@ -10,8 +10,8 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.mutable.Queue
 import scala.reflect.ClassTag
 
-class ProducerWorker[I : ClassTag, O : ClassTag](val workerId: String = UUID.randomUUID.toString.substring(0, 7),
-                                      val settings: ProducerSettings[I, O]) extends Runnable {
+class ProducerWorker[I: ClassTag, O: ClassTag](val workerId: String = UUID.randomUUID.toString.substring(0, 7),
+                                               val settings: ProducerSettings[I, O]) extends Runnable {
 
   @volatile
   private var running = true
@@ -52,15 +52,6 @@ class ProducerWorker[I : ClassTag, O : ClassTag](val workerId: String = UUID.ran
         logger.warn(s"[${workerId}] Unable to send message ${unitOfWork.payload} to topic ${unitOfWork.topic} due to serialization errors.")
     }
   }
-
-  /*private def serialize(payload: Message): Option[String] = {
-    try {
-      Some(JsonUtil.toJson(payload))
-    } catch {
-      case ex: Exception =>
-        None
-    }
-  }*/
 
   def shutdown() = running = false
 
