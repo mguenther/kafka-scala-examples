@@ -4,7 +4,6 @@ MAINTAINER Markus Guenther <markus.guenther@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV SCALA_VERSION 2.11
-ENV ZK_HOSTS=zookeeper:2181
 ENV KM_CONFIGFILE="/kafka-manager-1.3.1.8/conf/application.conf"
 ENV KM_VERSION=1.3.1.8
 ENV KM_REVISION=97329cc8bf462723232ee73dc6702c064b5908eb
