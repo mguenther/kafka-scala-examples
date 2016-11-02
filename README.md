@@ -60,7 +60,7 @@ Click on ```Save``` at the bottom of the form and you will be redirected to the 
 
 ## Running the Scala-based Kafka CLI
 
-Go to the repository root and issue
+Go to the root of the repository and issue
 
 ```bash
 $ sbt run
@@ -81,6 +81,13 @@ to send a message to topic ```test```. You should see something along the lines 
 ```
 
 This output tells you that the producer with ID ```ba6a6d0``` has accepted and sent the message to topic ```test``` and that sometime after the consumer with ID ```a19be40``` has read that same message from topic ```test```, to which it is subscribed to.
+
+## Code Walkthrough
+
+* ```SimpleProducer``` and ```SimpleConsumer``` contain the minimalistic examples that I have shown during the presentation.
+* A slightly more sophisticated approach is shown in classes ```ProducerWorker``` and ```ConsumerWorker```. Both of these classes are ```Runnable```s that are executed within a dedicated thread.
+* A ```ProducerWorker``` requires an ```Encoder```, while a ```ConsumerWorker``` operates with a ```Decoder``` that is compatible with the ```Encoder``` of the resp. producer. To use this in a type-safe way, encoders and decoders are coupled as a ```Codec```. Have a look at ```JsonCodec``` for a JSON-based example or ```AvroCodec``` for a codec that supports bijective mappings using Avro.
+* ```Settings``` contains case classes that are used to configure both producers and consumers. Keep in mind that Kafka uses default values for all other parameters that are not provided while initializing producers and consumers.
 
 ## License
 
