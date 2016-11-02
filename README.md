@@ -1,6 +1,6 @@
 # Using Apache Kafka from Scala
 
-This repository contains sample code that showcases how to use Kafka producers and Kafka consumers. These examples are used to demonstrate Apache Kafka as part of my talk ***Apache Kafka for Fast Data Pipelines*** which I gave at November, 1st 2016 for the Rhein-Main-Scala Enthusiasts Meetup.
+This repository contains sample code that showcases how to use Kafka producers and Kafka consumers. These examples are used to demonstrate Apache Kafka as part of my talk [Apache Kafka for Fast Data Pipelines](http://mguenther.github.io/presentations/scala_rhein_main-kafka_for_fast_data_pipelines.html#/) which I gave at November, 1st 2016 for the Rhein-Main-Scala Enthusiasts Meetup.
 
 ## Prerequisities
 
